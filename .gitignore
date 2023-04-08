@@ -1,0 +1,7 @@
+﻿.idea
+.vs
+*.DotSettings.user
+bin
+obj
+data.csv
+model.zip
