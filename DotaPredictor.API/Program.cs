@@ -1,5 +1,7 @@
+using DotaPredictor.API;
 using DotaPredictor.DataBuilder.Extensions;
 using DotaPredictor.DataBuilder.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,8 @@ var predictor = app.Services.GetRequiredService<IPredictorService>();
 //predictor.SaveModel("model.zip");
 predictor.LoadModel("model.zip");
 
-app.MapGet("/", async (IEnumerable<int> allies, IEnumerable<int> enemies) => await predictor.PredictHeroSuccesses(allies, enemies));
+app.MapPost(
+    "/",
+    async ([FromBody] PredictionRequest request) => await predictor.PredictHeroSuccesses(request.Allies, request.Enemies));
 
 app.Run();
