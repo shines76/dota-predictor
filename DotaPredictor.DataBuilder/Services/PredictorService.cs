@@ -23,10 +23,10 @@ public class PredictorService : IPredictorService
         var csvData = ReadMatches(path);
         var dataView = _context.Data.LoadFromEnumerable(csvData);
         _schema = dataView.Schema;
-        
+
         var estimator = _context.Transforms.Concatenate("Features", nameof(Match.DireHeroFlags), nameof(Match.RadiantHeroFlags))
                                 .Append(
-                                     _context.BinaryClassification.Trainers.FieldAwareFactorizationMachine(
+                                     _context.BinaryClassification.Trainers.LinearSvm(
                                          labelColumnName: nameof(Match.RadiantWin),
                                          featureColumnName: "Features"));
 
@@ -58,25 +58,19 @@ public class PredictorService : IPredictorService
                             .Select(
                                  id =>
                                  {
-                                     try
+                                     var match = new Match
                                      {
-                                         var match = new Match
-                                         {
-                                             RadiantWin = true,
-                                             DireHeroes = enemies.ToArray(),
-                                             RadiantHeroes = allies.Append(id).ToArray()
-                                         };
+                                         RadiantWin = true,
+                                         DireHeroes = enemies.ToArray(),
+                                         RadiantHeroes = allies.Append(id).ToArray()
+                                     };
 
-                                         match.BuildFlags();
+                                     match.BuildFlags();
 
-                                         var result = predictor.Predict(match);
-                                         result.Id = id;
-                                         return result;
-                                     }
-                                     catch
-                                     {
-                                         throw;
-                                     }
+                                     var result = predictor.Predict(match);
+                                     result.HeroId = id;
+                                     result.HeroName = heroes[id];
+                                     return result;
                                  })
                             .OrderByDescending(x => x.Score)
                             .ToList();

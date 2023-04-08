@@ -2,6 +2,7 @@
 using DotaPredictor.DataBuilder.Interfaces;
 using DotaPredictor.DataBuilder.Models;
 using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 
 namespace DotaPredictor.DataBuilder.Services;
 
@@ -25,7 +26,7 @@ public class HeroService : IHeroService
                    {
                        entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1);
                        var json = await _client.GetStringAsync("https://api.opendota.com/api/heroStats", cancel);
-                       var heroes = JsonSerializer.Deserialize<List<HeroResponse>>(json);
+                       var heroes = JsonConvert.DeserializeObject<List<HeroResponse>>(json);
                        return heroes == null ? new Dictionary<int, string>() : heroes.ToDictionary(x => x.Id, x => x.LocalizedName);
                    })
             ?? new Dictionary<int, string>();
