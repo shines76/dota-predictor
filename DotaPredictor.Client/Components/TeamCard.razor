@@ -1,0 +1,16 @@
+﻿<div class="row team-card">
+    <h3>@_team</h3>
+    @foreach (var heroCard in HeroCards)
+    {
+        if (heroCard != null)
+        {
+            <div class="col-md-2" style="margin-left:20px; min-width:max-content;">
+                <span class="oi oi-circle-x" style="cursor:pointer;" aria-hidden="true" @onclick="() => OnDelete(this, heroCard)"></span>
+                <HeroCard Hero="heroCard.Hero"></HeroCard>
+
+            </div>
+        }
+
+
+    }
+</div>

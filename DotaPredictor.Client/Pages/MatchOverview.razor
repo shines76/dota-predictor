@@ -1,0 +1,72 @@
+﻿@page "/matchoverview"
+
+<h2>Match Overview</h2>
+
+
+@if (Heros != null)
+{<!-- Default switch -->
+    <div class="row">
+        <div class="col-1">
+            <p>Radiant</p>
+        </div>
+        <div class="col-1">
+            <div class="md-form">
+                <div class="material-switch">
+                    <input id="switch-default" name="switch-default" type="checkbox" @onchange="(() => ToggleUserTeam())">
+                    <label for="switch-default"></label>
+                </div>
+            </div>
+        </div>
+        <div class="col-1">
+            <p>Dire</p>
+        </div>
+    </div>
+    <div style="display:flex;">
+        <div style="height: 800px; overflow-y:scroll; display:inline-block;">
+            @foreach (var hero in Heros)
+            {
+                @if (!HeroHasBeenAdded(hero))
+                {
+                    <div class="hero-card-container">
+                        <HeroCard Hero="hero"></HeroCard>
+                        <div class="overlay-container">
+                            <div class="green-overlay" @onclick=@(() => HeroCardClick("green", hero))></div>
+                            <div class="red-overlay" @onclick=@(() => HeroCardClick("red", hero))></div>
+                            
+                        </div>
+                    </div>
+
+                }
+
+            }
+        </div>
+        <div style="height: 800px; overflow-y:scroll; display:inline-block;">
+            @foreach (var hero in Heros)
+            {
+                @if (!HeroHasBeenAdded(hero))
+                {
+                    <div class="hero-card-container">
+                        <div class="green-overlay-sug"></div>
+                        <HeroCard Hero="hero"></HeroCard>              
+                    </div>
+
+                }
+            }
+        </div>
+        <div class="team-card-container">
+            <TeamCard _team="@Team.Radiant" RemoveHeroCardCallBack="HandleHeroRemoved" @ref="TeamCardRadiant"></TeamCard>
+            <TeamCard _team="@Team.Dire" RemoveHeroCardCallBack="HandleHeroRemoved" @ref="TeamCardDire"></TeamCard>
+        </div>
+
+    </div>
+
+    
+}
+else
+{
+    <p>Loading heroes...</p>
+}
+
+
+
+
