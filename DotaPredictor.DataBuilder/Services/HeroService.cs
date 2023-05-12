@@ -26,6 +26,7 @@ public class HeroService : IHeroService
                    {
                        entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1);
                        var json = await _client.GetStringAsync("https://api.opendota.com/api/heroStats", cancel);
+                       Console.WriteLine(json);
                        var heroes = JsonConvert.DeserializeObject<List<HeroResponse>>(json);
                        return heroes == null ? new Dictionary<int, string>() : heroes.ToDictionary(x => x.Id, x => x.LocalizedName);
                    })

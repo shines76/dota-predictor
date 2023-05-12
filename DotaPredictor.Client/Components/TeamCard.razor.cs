@@ -50,6 +50,13 @@ namespace DotaPredictor.Client.Components
             EventCallBackArgs args = new EventCallBackArgs(teamCard, heroCard);
             await RemoveHeroCardCallBack.InvokeAsync(args);
         }
+
+        public IEnumerable<int> GetListOfTeamHeros()
+        {
+ 
+
+            return HeroCards.Select(x => (int)x.Hero.Id).ToList();
+        }
     }
 
     public class EventCallBackArgs
@@ -63,4 +70,6 @@ namespace DotaPredictor.Client.Components
         }
 
     }
+
+   
 }

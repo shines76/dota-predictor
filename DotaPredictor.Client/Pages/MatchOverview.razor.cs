@@ -1,6 +1,7 @@
 ﻿using DotaPredictor.Client.Components;
 using DotaPredictor.Client.Models;
 using DotaPredictor.Client.Services;
+using DotaPredictor.DataBuilder.Models;
 using DotaPredictor.DataBuilder.Services;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -15,37 +16,38 @@ namespace DotaPredictor.Client.Pages
     {
         [Inject]
         private HeroDetailsService? _HeroDetailsService { get; set; }
-        //[Inject]
-        //private PredictorService? _PredictorService { get; set; }
-        public List<Hero>? Heros { get; set; } = null;
+        private List<Hero>? Heros { get; set; } = null;
+        [Inject]
+        private PredictorService? _PredictorService { get; set; }
         private TeamCard? TeamCardRadiant { get; set; }
         private TeamCard? TeamCardDire { get; set; }
         private User _user { get; set; } = new User();
-
-
+        
         protected override async Task OnInitializedAsync()
         {
             var heros = await _HeroDetailsService.GetHeroListAsync();
 
             Heros = heros;
-
-            
+            //DownloadZipFile("https://github.com/cox5529/dota-predictor/blob/master/api/DotaPredictor.API/model.zip", Path.Combine(System.AppContext.BaseDirectory, "model.zip"));
 
         }
+
+
 
         private void HeroCardClick(string color, Hero hero)
         {
             if (TeamCardRadiant != null && TeamCardDire != null)
             {
-                    if (color == "green")
-                    {
-                        TeamCardRadiant.AddHeroCard(hero);
-                    }
-                    else
-                    {
-                        TeamCardDire.AddHeroCard(hero);
-                    }
-               
+                if (color == "green")
+                {
+                    TeamCardRadiant.AddHeroCard(hero);
+                }
+                else
+                {
+                    TeamCardDire.AddHeroCard(hero);
+                }
+
+                SetCharacterSuggestions();
             }
 
         }
@@ -70,11 +72,8 @@ namespace DotaPredictor.Client.Pages
             return false;
         }
 
-        public void HandleHeroRemoved(EventCallBackArgs args)
+        private void HandleHeroRemoved(EventCallBackArgs args)
         {
-
-
-
             if (args != null)
             {
                 if (args.TeamCard._team.Equals(Team.Radiant))
@@ -89,9 +88,11 @@ namespace DotaPredictor.Client.Pages
             }
         }
 
-        public void ToggleUserTeam() {
-            
+        private void ToggleUserTeam()
+        {
+
             //add logic to update Suggested picks List
+
 
             if (_user._team.Equals(Team.Radiant))
             {
@@ -101,9 +102,42 @@ namespace DotaPredictor.Client.Pages
             {
                 _user._team = Team.Radiant;
             }
-            
+
+        }
+
+        private async void SetCharacterSuggestions()
+        {
+            if (TeamCardRadiant != null && TeamCardDire != null)
+            {
+                IEnumerable<int> allies;
+                IEnumerable<int> enemies;
+
+                if (_user._team.Equals(Team.Radiant))
+                {
+                    allies = TeamCardRadiant.GetListOfTeamHeros();
+                    enemies = TeamCardDire.GetListOfTeamHeros();
+
+                }
+                else
+                {
+                    allies = TeamCardDire.GetListOfTeamHeros();
+                    enemies = TeamCardDire.GetListOfTeamHeros();
+                }
+                _PredictorService.LoadModel("C:\\Users\\ttred\\source\\repos\\dota-predictor\\DotaPredictor.Client\\bin\\Debug\\net6.0-windows10.0.19041.0\\win10-x64\\AppX\\model.zip");
+                var firstRun = await _PredictorService.PredictHeroSuccesses(allies, enemies);
+
+            }
 
 
+
+        }
+        private static async Task DownloadZipFile(string url, string filePath)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                var fileContents = await httpClient.GetByteArrayAsync(url);
+                await File.WriteAllBytesAsync(filePath,fileContents);
+            }
         }
 
     }

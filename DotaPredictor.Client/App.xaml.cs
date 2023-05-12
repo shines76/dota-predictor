@@ -1,12 +1,35 @@
-﻿namespace DotaPredictor.Client
+﻿using DotaPredictor.Client.Services;
+
+namespace DotaPredictor.Client
 {
     public partial class App : Application
     {
         public App()
         {
-            InitializeComponent();
 
+            InitializeComponent();
             MainPage = new MainPage();
         }
+        protected override Window CreateWindow(IActivationState? activationState)
+        {
+           Window window = base.CreateWindow(activationState);
+          
+      
+            return window;
+        }
+
+        protected override void OnStart() {
+        
+        
+        
+        }
+        protected override void OnSleep() {
+        
+        
+        
+        }
+      
+
+      
     }
 }

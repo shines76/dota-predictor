@@ -1,4 +1,6 @@
 ﻿using DotaPredictor.Client.Models;
+using DotaPredictor.DataBuilder.Interfaces;
+using DotaPredictor.DataBuilder.Services;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
@@ -6,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+
 
 namespace DotaPredictor.Client.Services
 {
@@ -24,7 +27,7 @@ namespace DotaPredictor.Client.Services
         public async Task<List<Hero>> GetHeroListAsync(CancellationToken cancel = default)
         {
             return await _cache.GetOrCreateAsync(
-                       "dota_heroes",
+                       "dota_heroes2",
                        async (entry) =>
                        {
                            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1);
@@ -35,6 +38,7 @@ namespace DotaPredictor.Client.Services
                 ?? new List<Hero>();
         }
 
+       
     }
 }
 
