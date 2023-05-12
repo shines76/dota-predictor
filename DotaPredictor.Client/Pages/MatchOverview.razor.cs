@@ -30,7 +30,7 @@ namespace DotaPredictor.Client.Pages
             var heros = await _HeroDetailsService.GetHeroListAsync();
 
             Heros = heros;
-            
+
             await DownloadZipFile("https://github.com/cox5529/dota-predictor/raw/master/api/DotaPredictor.API/model.zip", filePath);
 
         }
@@ -130,22 +130,17 @@ namespace DotaPredictor.Client.Pages
                 Suggestions = await _PredictorService.PredictHeroSuccesses(allies, enemies);
 
                 StateHasChanged();
-
-                
             }
-
-
-
         }
         private static async Task DownloadZipFile(string url, string filePath)
         {
             using (var httpClient = new HttpClient())
             {
                 var fileContents = await httpClient.GetByteArrayAsync(url);
-                await File.WriteAllBytesAsync(filePath,fileContents);
+                await File.WriteAllBytesAsync(filePath, fileContents);
             }
         }
 
-      
+
     }
 }
