@@ -22,13 +22,16 @@ namespace DotaPredictor.Client.Pages
         private TeamCard? TeamCardRadiant { get; set; }
         private TeamCard? TeamCardDire { get; set; }
         private User _user { get; set; } = new User();
-        
+        private readonly string filePath = Path.Combine(System.AppContext.BaseDirectory, "model.zip");
+        private IEnumerable<MatchPrediction>? Suggestions;
+
         protected override async Task OnInitializedAsync()
         {
             var heros = await _HeroDetailsService.GetHeroListAsync();
 
             Heros = heros;
-            //DownloadZipFile("https://github.com/cox5529/dota-predictor/blob/master/api/DotaPredictor.API/model.zip", Path.Combine(System.AppContext.BaseDirectory, "model.zip"));
+            
+            await DownloadZipFile("https://github.com/cox5529/dota-predictor/raw/master/api/DotaPredictor.API/model.zip", filePath);
 
         }
 
@@ -123,9 +126,12 @@ namespace DotaPredictor.Client.Pages
                     allies = TeamCardDire.GetListOfTeamHeros();
                     enemies = TeamCardDire.GetListOfTeamHeros();
                 }
-                _PredictorService.LoadModel("C:\\Users\\ttred\\source\\repos\\dota-predictor\\DotaPredictor.Client\\bin\\Debug\\net6.0-windows10.0.19041.0\\win10-x64\\AppX\\model.zip");
-                var firstRun = await _PredictorService.PredictHeroSuccesses(allies, enemies);
+                _PredictorService.LoadModel(filePath);
+                Suggestions = await _PredictorService.PredictHeroSuccesses(allies, enemies);
 
+                StateHasChanged();
+
+                
             }
 
 
@@ -140,5 +146,6 @@ namespace DotaPredictor.Client.Pages
             }
         }
 
+      
     }
 }

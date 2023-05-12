@@ -40,19 +40,24 @@
 
             }
         </div>
-        <div style="height: 800px; overflow-y:scroll; display:inline-block;">
-            @foreach (var hero in Heros)
+        @if (Suggestions != null)
+        {
+             <div style="height: 800px; overflow-y:scroll; display:inline-block;">
+            @foreach (var prediction in Suggestions)
             {
-                @if (!HeroHasBeenAdded(hero))
+                var hero = Heros.FirstOrDefault(h => h.Id == prediction.HeroId); 
+                if(hero != null)
                 {
                     <div class="hero-card-container">
-                        <div class="green-overlay-sug"></div>
+                        <div class=""></div>
                         <HeroCard Hero="hero"></HeroCard>              
                     </div>
-
                 }
+       
             }
         </div>
+        }
+       
         <div class="team-card-container">
             <TeamCard _team="@Team.Radiant" RemoveHeroCardCallBack="HandleHeroRemoved" @ref="TeamCardRadiant"></TeamCard>
             <TeamCard _team="@Team.Dire" RemoveHeroCardCallBack="HandleHeroRemoved" @ref="TeamCardDire"></TeamCard>
