@@ -87,6 +87,9 @@ namespace DotaPredictor.Client.Pages
                 {
                     TeamCardDire.RemoveHeroCard(args.HeroCard);
                 }
+
+                SetCharacterSuggestions();
+
                 StateHasChanged();
             }
         }
